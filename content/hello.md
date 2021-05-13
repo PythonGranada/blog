@@ -1,12 +1,12 @@
 Title: README
-Date: 2010-12-03 10:20
-Modified: 2010-12-05 19:30
+Date: 2021-05-13 18:20
+Modified: 2021-05-13 18:20
 Category: Blog
 Tags: pelican, publishing
 Slug: readme
 Authors: José Miguel
-Summary: Este es el repositorio con el código fuente de la humilde web de la organización **« Python Granada »**
-Extract: Este es el repositorio con el código fuente de la humilde web de la organización « Python Granada »
+Summary: Este es el repositorio con el código fuente de la humilde web de la organización Python Granada
+Extract: Este es el repositorio con el código fuente de la humilde web de la organización Python Granada
 
 # Web Python Granada 
 
