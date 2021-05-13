@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="{{ DEFAULT_LANG | default('es') }}">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		{% if article and article.author %}
+			<meta name="author" content="{{ article.author }}" />
+		{% elif page and page.author %}
+			<meta name="author" content="{{ page.author }}" />
+		{% else %}
+			<meta name="author" content="{{ AUTHOR }}" />
+		{% endif %}
+		
+		{% if SITE_DESCRIPTION %}
+			<meta name="description" content="{{ SITE_DESCRIPTION }}">
+		{% endif %}
+		
+		{% if TWITTER_USERNAME %}
+			<meta name="twitter:creator" content="@{{ TWITTER_USERNAME }}" />
+		{% endif %}
+		
+		<title>{% block title %}{{ SITENAME|striptags|e }}{% endblock title %}</title>
+		
+		{% assets filters="libsass", output="css/style.min.css", "scss/style.scss" %}
+  			<link rel="stylesheet" href="{{SITEURL}}/{{ASSET_URL}}">
+		{% endassets %}
+				
+		<script src="{{ main_siteurl }}/theme/js/menu.js"></script>
+
+		{% if MATOMO %}
+			{{ MATOMO }}
+		{% endif %}
+	</head>
+	<body>
+
+		{% block navbar %}
+			{% include "_includes/navbar.html" %}
+		{% endblock navbar %}
+
+		<section class="section">
+			<div class="container">
+				{% block content %}
+				<!-- Content -->
+				{% endblock content %}
+			</div>
+		</section>
+		
+		{% block footer %}
+			{% include "_includes/footer.html" %}
+		{% endblock footer %}
+
+	</body>
+</html>

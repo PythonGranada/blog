@@ -1,0 +1,13 @@
+version: '3'
+services:
+  pelican-sitebuilder:
+    build:
+      context: .
+      dockerfile: compose/pelican/Dockerfile
+    ports: 
+      - "8080:8000"
+    volumes:
+      - .:/project-root
+    environment: 
+      - PELICAN_THEME_FOLDER=/themes/buruma
+      - CONFFILE=pelicanconf.dev.py

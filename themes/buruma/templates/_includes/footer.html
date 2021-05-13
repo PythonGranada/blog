@@ -1,0 +1,19 @@
+<footer class="footer">
+    <div class="container has-text-centered">
+        <div class="columns">
+            <div class="column">
+                {% if FOOTER %}
+                    {{ FOOTER }}
+                {% else %}
+                    <p>{% trans %}Website generated with{% endtrans %} <a href="https://getpelican.com">Pelican</a>. <a href="https://github.com/ivanhercaz/buruma">Buruma</a> {% trans %}theme by{% endtrans %} <a href="https://ivanhercaz.com">Ivanhercaz</a></p>
+                {% endif %}
+            </div>
+            <div class="column">
+                {% if LICENSE %}
+                    {{ LICENSE_NOTICE}}	
+                {% else %}
+                    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg" alt="License: CC BY-NC 4.0">
+                {% endif %}
+        </div>
+    </div>
+</footer>
