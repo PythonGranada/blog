@@ -80,7 +80,7 @@ En el archivo **Makefile** tienes los comandos más usados para gestionar el pro
 make up
 ```
 
-Accede con tu navegador a la url [localhost:8000](http://localhost:8000)
+Accede con tu navegador a la url [localhost:8000](http://localhost:8080)
 
 
 ## Tengo algo bueno, vamos a publicar.
