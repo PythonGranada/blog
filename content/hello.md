@@ -2,7 +2,7 @@ Title: README
 Date: 2021-05-13 18:20
 Modified: 2021-05-13 18:20
 Category: Blog
-Tags: pelican, publishing
+Tags: pelican
 Slug: hello
 Authors: José Miguel
 Summary: Este es el repositorio con el código fuente de la humilde web de la organización Python Granada

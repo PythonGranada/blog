@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 
+from pelican_jupyter import markup as nb_markup
+
 AUTHOR = 'Python Granada Org'
 SITENAME = 'Python Granada'
-SITEURL = ''
+SITEURL = 'https://pythongranada.github.io/blog'
 
 PATH = 'content'
 
@@ -18,12 +20,28 @@ TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
+MARKUP = ("md", "ipynb")
+IGNORE_FILES = [".ipynb_checkpoints"]
+
 PLUGIN_PATHS = ["plugins"]
-PLUGINS = ["i18n_subsites", "assets"]
+
+
+LIQUID_TAGS = []
+PLUGINS = ["i18n_subsites", "assets", nb_markup]
+
+
+IPYNB_FIX_CSS = True
+IPYNB_SKIP_CSS = False
+IPYNB_STOP_SUMMARY_TAGS = [('div', ('class', 'input')), ('div', ('class', 'output')), ('h2', ('id', 'Header-2'))]
+IPYNB_GENERATE_SUMMARY = True
+
 
 JINJA_ENVIRONMENT = {
     "extensions": ["jinja2.ext.i18n"],
 }
+
+LIQUID_CONFIGS = (("IPYNB_EXPORT_TEMPLATE", "notebook.tpl", ""), )
+
 
 
 # Blogroll
@@ -37,10 +55,11 @@ SOCIAL = (('You can add links in your config file', '#'),
           ('Another social link', '#'),)
 
 DEFAULT_PAGINATION = False
-SITEURL="https://pythongranada.github.io/blog"
+
 
 # Theme config
 MENUITEMS_NAVBAR = (("Asociación", f"{SITEURL}/pages/about.html"),)
 NAVBAR_STYLE = "is-primary"
 THEME_LOGO = f"{SITEURL}/theme/images/logo_grande.svg"
-FOOTER= "Made with ❤️ with Python from Granada. Under construction 🚧"
+FOOTER= "Made with ❤️ using Python from Granada. Under construction 🚧"
+

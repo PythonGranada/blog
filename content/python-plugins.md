@@ -1,6 +1,10 @@
 Title: Plugins en Python
-Date: 2010-12-03 10:20
-Category: Python
+Date: 2021-06-01 10:20
+Category: Blog
+Slug: python-plugins
+Authors: Antonio Ramirez
+Tags: plugins
+Extract: Programa tus propios plugins en Python
 
 Vamos a proponer un pequeño caso de uso. Supongamos estamos trabajando en un programa que necesita generar una serie de gráficas. Para poder generar estas gráficas, debemos de acceder a una base de datos y desde ahí, recuperar un conjunto de datos, agruparlos según un criterio temporal (por ejemplo, días u horas),
 y además, en algunos casos, realizar transformaciones sobre esos datos para generar otros datos.

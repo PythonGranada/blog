@@ -26,7 +26,8 @@
 		{% assets filters="libsass", output="css/style.min.css", "scss/style.scss" %}
   			<link rel="stylesheet" href="{{SITEURL}}/{{ASSET_URL}}">
 		{% endassets %}
-				
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="{{ main_siteurl }}/theme/js/menu.js"></script>
 
 		{% if MATOMO %}
