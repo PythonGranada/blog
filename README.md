@@ -21,7 +21,7 @@ Hemos estructurado el proyecto para separar dos roles diferentes.
 ### Creador de contenidos o editor
 
 Aquí no necesitas tener grandes conocimientos técnicos, solo necesitamos creatividad.
-Todos los contenidos se escriben usando [Markdown](https://markdown.es/) y no tienes que pelearte con HTML ni CSS, solo darle rienda suelta a tu imaginación.
+Todos los contenidos se escriben usando [Markdown](https://markdown.es/) y no tienes que pelearte con HTML ni CSS, solo darle rienda suelta a tu imaginación. También, si quieres enseñar gráficos o partes de código en tus artículos puedes hacerlo a través de [jupyter notebook](https://jupyter.org/), encontrarás la info detallada de como hacerlo [aquí](https://github.com/danielfrg/pelican-jupyter).
 
 
 ### Web developer
