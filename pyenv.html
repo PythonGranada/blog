@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+			<meta name="author" content="Christian Prada" />
+		
+		
+		
+		<title>Pyenv - Managing Multiple Python Versions  - Python Granada
+</title>
+		
+  			<link rel="stylesheet" href="https://pythongranada.github.io/blog/theme/css/style.min.css?3e58e027">
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="https://pythongranada.github.io/blog/theme/js/menu.js"></script>
+
+	</head>
+	<body>
+
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog">
+                <img src="https://pythongranada.github.io/blog/theme/images/logo_grande.svg">
+            </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog/pages/about.html">
+                Asociación
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link" href="https://pythongranada.github.io/blog/categories">
+Categorias                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="https://pythongranada.github.io/blog/category/blog.html">
+                        Blog
+                    </a>
+                </div>
+            </div>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item">
+            <div class="buttons">
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+		<section class="section">
+			<div class="container">
+<article class="message is-info">
+	<div class="message-header">
+		<h2>Pyenv - Managing Multiple Python Versions</h2>
+		<p><time itemprop="dateCreated" datetime="2021-10-04T16:47:00+02:00">Mon 04 October 2021</time></p>
+	</div>
+	<div class="message-body has-text-dark">
+		<h2>¿Porqué usar pyenv y no el que trae el sistema por defecto?</h2>
+<p>Imagina que trabajas en una empresa donde el proyecto que se desarrolla tiene varias versiones de Python, por ejemplo <a href="https://www.odoo.com/es_ES">Odoo</a> el cual como es habitual podemos tener varios clientes con versiones más actuales o no y tienes que dar soporte a cada una de ellas. </p>
+<p>O más fácil aun, simplemente eres como yo, desarrollador inquieto que le gusta trastear y probar los cambios que traen las nuevas versiones de Python.</p>
+<p>En cualquiera de los dos ejemplos que te expongo, puede resultarnos tedioso o engorroso la tarea de gestionar muchas versiones, y más aun no meter la pata ejecutando una versión que no es.</p>
+<p>Pyenv es una herramienta que te permite fijar versiones de python por directorios locales o seleccionar por defecto una versión global que usarás para tu sistema.</p>
+<h2>¿Para qué sistemas operativos está disponible?</h2>
+<ul>
+<li>Windows</li>
+<li>MacOS</li>
+<li>Linux (Debian, Ubuntu, Fedora/CentOS/RHEL, OpenSUSE, Alpine, Archlinux, ...)</li>
+</ul>
+<h2>Dependencias necesarias e Instalación</h2>
+<h3>MacOs &amp; Linux</h3>
+<p>Ubuntu / Debian</p>
+<div class="highlight"><pre><span></span><code>$ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev <span class="se">\</span>
+libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev <span class="se">\</span>
+libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># the sed invocation inserts the lines at the start of the file</span>
+<span class="c1"># after any initial comment lines</span>
+sed -Ei -e <span class="s1">&#39;/^([^#]|$)/ {a \</span>
+<span class="s1">export PYENV_ROOT=&quot;$HOME/.pyenv&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">&#39;</span> -e <span class="s1">&#39;:a&#39;</span> -e <span class="s1">&#39;$!{n;ba};}&#39;</span> ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt;~/.profile
+
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init -)&quot;&#39;</span> &gt;&gt; ~/.bashrc
+</code></pre></div>
+
+<p>Fedora/CentOS/RHEL</p>
+<div class="highlight"><pre><span></span><code>$ sudo yum install gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite <span class="se">\</span>
+sqlite-devel openssl-devel xz xz-devel libffi-devel
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>sed -Ei -e <span class="s1">&#39;/^([^#]|$)/ {a \</span>
+<span class="s1">export PYENV_ROOT=&quot;$HOME/.pyenv&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">&#39;</span> -e <span class="s1">&#39;:a&#39;</span> -e <span class="s1">&#39;$!{n;ba};}&#39;</span> ~/.bash_profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt; ~/.bash_profile
+
+<span class="nb">echo</span> <span class="s1">&#39;export PYENV_ROOT=&quot;$HOME/.pyenv&quot;&#39;</span> &gt;&gt; ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;&#39;</span> &gt;&gt; ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt; ~/.profile
+
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init -)&quot;&#39;</span> &gt;&gt; ~/.bashrc
+</code></pre></div>
+
+<p>OpenSUSE</p>
+<div class="highlight"><pre><span></span><code>zypper <span class="k">in</span> zlib-devel bzip2 libbz2-devel libffi-devel <span class="se">\</span>
+libopenssl-devel readline-devel sqlite3 sqlite3-devel xz xz-devel
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nb">echo</span> <span class="s1">&#39;export PYENV_ROOT=&quot;$HOME/.pyenv&quot;&#39;</span> &gt;&gt; ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;&#39;</span> &gt;&gt; ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt; ~/.profile
+
+<span class="nb">echo</span> <span class="s1">&#39;if command -v pyenv &gt;/dev/null; then eval &quot;$(pyenv init -)&quot;; fi&#39;</span> &gt;&gt; ~/.bashrc
+</code></pre></div>
+
+<p>Alpine</p>
+<div class="highlight"><pre><span></span><code>apk add libffi-dev ncurses-dev openssl-dev readline-dev \
+tk-dev xz-dev zlib-dev
+</code></pre></div>
+
+<p>Archlinux</p>
+<div class="highlight"><pre><span></span><code>yay -S pyenv
+</code></pre></div>
+
+<p>MacOS</p>
+<div class="highlight"><pre><span></span><code>$ brew install openssl readline sqlite3 xz zlib pyenv
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># BASH</span>
+<span class="c1"># the sed invocation inserts the lines at the start of the file</span>
+<span class="c1"># after any initial comment lines</span>
+sed -Ei -e <span class="s1">&#39;/^([^#]|$)/ {a \</span>
+<span class="s1">export PYENV_ROOT=&quot;$HOME/.pyenv&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">export PATH=&quot;$PYENV_ROOT/bin:$PATH&quot;</span>
+<span class="s1">a \</span>
+<span class="s1">&#39;</span> -e <span class="s1">&#39;:a&#39;</span> -e <span class="s1">&#39;$!{n;ba};}&#39;</span> ~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt;~/.profile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init -)&quot;&#39;</span> &gt;&gt; ~/.bashrc
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># ZSH</span>
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init --path)&quot;&#39;</span> &gt;&gt; ~/.zprofile
+<span class="nb">echo</span> <span class="s1">&#39;eval &quot;$(pyenv init -)&quot;&#39;</span> &gt;&gt; ~/.zshrc
+</code></pre></div>
+
+<h3>Windows:</h3>
+<p>El paquete se llama: <a href="https://github.com/pyenv-win/pyenv-win#finish-the-installation">pyenv-win</a>, puedes instalarlo de cuatro maneras diferentes, pero aquí usaremos pip, entendiendo que ya dispones de una versión de Python instalada:</p>
+<div class="highlight"><pre><span></span><code>Powershell o Git Bash: pip install pyenv-win --target <span class="nv">$HOME</span><span class="se">\\</span>.pyenv
+cmd.exe: pip install pyenv-win --target %USERPROFILE%<span class="se">\.</span>pyenv
+</code></pre></div>
+
+<p>Pasos para finalizar la instalación:</p>
+<p>Añade PYENV, PYENV_HOME and PYENV_ROOT a tus variables de entorno:</p>
+<p>Usando PowerShell o Windows 8 / Terminal ejecuta: </p>
+<div class="highlight"><pre><span></span><code><span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;PYENV&#39;</span><span class="p">,</span><span class="nv">$env:USERPROFILE</span> <span class="p">+</span> <span class="s2">&quot;\.pyenv\pyenv-win\&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;PYENV_ROOT&#39;</span><span class="p">,</span><span class="nv">$env:USERPROFILE</span> <span class="p">+</span> <span class="s2">&quot;\.pyenv\pyenv-win\&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;PYENV_HOME&#39;</span><span class="p">,</span><span class="nv">$env:USERPROFILE</span> <span class="p">+</span> <span class="s2">&quot;\.pyenv\pyenv-win\&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Ahora añade el siguiente path a tu variable USER PATH para tener acceso al comando pyenv:</p>
+<div class="highlight"><pre><span></span><code><span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="nv">$env:USERPROFILE</span> <span class="p">+</span> <span class="s2">&quot;\.pyenv\pyenv-win\bin;&quot;</span> <span class="p">+</span> <span class="nv">$env:USERPROFILE</span> <span class="p">+</span> <span class="s2">&quot;\.pyenv\pyenv-win\shims;&quot;</span> <span class="p">+</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s2">&quot;User&quot;</span><span class="p">),</span><span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Cierra y abre de nuevo la terminal y ejecuta: <code>bash pyenv --version</code></p>
+<p>Si el valor que recibes es la versión de pyenv, continua con el siguiente bloque, si recibes un error sigue leyendo:</p>
+<p>Si recibes el error "command not found" asegurate de que todas las variables de entorno se han añadido correctamente en:</p>
+<div class="highlight"><pre><span></span><code>PC → Properties → Advanced system settings → Advanced → Environment Variables... → PATH
+</code></pre></div>
+
+<p>Si recibes el error "command not found" y estas usando Visual Studio Code o otro IDE con terminal embebida reniciala y prueba de nuevo.</p>
+<p>¿Sigues sin hacerlo funcionar? Entra en la página web de <a href="https://github.com/pyenv-win/pyenv-win#finish-the-installation">pyenv-win</a></p>
+<h2>Instalando versiones de python</h2>
+<p>Listamos las versiones disponibles para instalar:</p>
+<div class="highlight"><pre><span></span><code>pyenv install --list
+</code></pre></div>
+
+<p>o filtrando directamente por la version que queremos</p>
+<div class="highlight"><pre><span></span><code>pyenv install --list <span class="p">|</span> grep <span class="s1">&#39;3.9&#39;</span>
+
+  <span class="m">3</span>.9.0
+  <span class="m">3</span>.9-dev
+  <span class="m">3</span>.9.1
+  <span class="m">3</span>.9.2
+  <span class="m">3</span>.9.4
+  <span class="m">3</span>.9.5
+  <span class="m">3</span>.9.6
+  <span class="m">3</span>.9.7
+  miniconda-3.9.1
+  miniconda3-3.9.1
+  miniconda3-3.9-4.9.2
+  miniconda3-3.9-4.10.3
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>pyenv install <span class="m">3</span>.9.7
+
+Downloading Python-3.9.7.tar.xz...
+-&gt; https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tar.xz
+Installing Python-3.9.7...
+...
+...
+Installed Python-3.9.7 to /Users/morphheus/.pyenv/versions/3.9.7
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>pyenv install <span class="m">3</span>.10.0
+
+Downloading Python-3.10.0.tar.xz...
+-&gt; https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tar.xz
+Installing Python-3.10.0...
+...
+...
+Installed Python-3.10.0 to /Users/morphheus/.pyenv/versions/3.10.0
+</code></pre></div>
+
+<h2>Seleccionando versión de python global (para el sistema)</h2>
+<p>Esta versión, sera la que tome el sistema por defecto, si no queremos setearla, cogerá la versión de python que tuvieses instalada antes de usar pyenv.</p>
+<p>Si queremos setear una versión:</p>
+<div class="highlight"><pre><span></span><code>pyenv global <span class="m">3</span>.9.7
+</code></pre></div>
+
+<p>Comprobamos que versión tenemos:</p>
+<div class="highlight"><pre><span></span><code>pyenv global
+
+<span class="m">3</span>.9.7
+</code></pre></div>
+
+<h2>Seleccionando versión de python local (proyecto)</h2>
+<p>Nos posicionamos en el proyecto donde queremos añadir una versión de Python diferente de la que usa nuestro sistema.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> devZone/foo
+pyenv <span class="nb">local</span> <span class="m">3</span>.10.0
+
+ls -la
+
+total <span class="m">8</span>
+drwxr-xr-x@  <span class="m">3</span> morphheus  staff   <span class="m">96</span>  <span class="m">4</span> nov <span class="m">23</span>:56 .
+drwxr-xr-x@ <span class="m">16</span> morphheus  staff  <span class="m">512</span>  <span class="m">4</span> nov <span class="m">23</span>:56 ..
+-rw-r--r--   <span class="m">1</span> morphheus  staff    <span class="m">7</span>  <span class="m">4</span> nov <span class="m">23</span>:56 .python-version
+</code></pre></div>
+
+<p>Comprobamos que versión tenemos:</p>
+<div class="highlight"><pre><span></span><code>pyenv <span class="nb">local</span> 
+
+<span class="m">3</span>.10.0
+</code></pre></div>
+
+<h2>Uso de python</h2>
+<p>En función de la versión que hayamos elegido anteriormente, si ejecutamos python no saldrá algo parecido a lo siguiente:</p>
+<div class="highlight"><pre><span></span><code>Python <span class="m">3</span>.9.7 <span class="o">(</span>default, Nov  <span class="m">4</span> <span class="m">2021</span>, <span class="m">23</span>:49:47<span class="o">)</span>
+<span class="o">[</span>Clang <span class="m">13</span>.0.0 <span class="o">(</span>clang-1300.0.29.3<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt;
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Python <span class="m">3</span>.10.0 <span class="o">(</span>default, Nov  <span class="m">4</span> <span class="m">2021</span>, <span class="m">23</span>:52:41<span class="o">)</span> <span class="o">[</span>Clang <span class="m">13</span>.0.0 <span class="o">(</span>clang-1300.0.29.3<span class="o">)]</span> on darwin
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt;
+</code></pre></div>
+
+<p>Vamos a probar una de las nuevas características que trae Python 3.10:</p>
+<p>Creamos un fichero con el siguiente contenido:</p>
+<div class="highlight"><pre><span></span><code>➜  foo cat handing_errors.py
+<span class="nv">expected</span> <span class="o">=</span> <span class="o">{</span><span class="m">9</span>: <span class="m">1</span>, <span class="m">18</span>: <span class="m">2</span>, <span class="m">19</span>: <span class="m">2</span>, <span class="m">27</span>: <span class="m">3</span>, <span class="m">28</span>: <span class="m">3</span>, <span class="m">29</span>: <span class="m">3</span>, <span class="m">36</span>: <span class="m">4</span>, <span class="m">37</span>: <span class="m">4</span>,
+            <span class="m">38</span>: <span class="m">4</span>, <span class="m">39</span>: <span class="m">4</span>, <span class="m">45</span>: <span class="m">5</span>, <span class="m">46</span>: <span class="m">5</span>, <span class="m">47</span>: <span class="m">5</span>, <span class="m">48</span>: <span class="m">5</span>, <span class="m">49</span>: <span class="m">5</span>, <span class="m">54</span>: <span class="m">6</span>,
+</code></pre></div>
+
+<p>Ahora seleccionamos como versión local la 3.9.7</p>
+<div class="highlight"><pre><span></span><code>pyenv <span class="nb">local</span> <span class="m">3</span>.9.7
+</code></pre></div>
+
+<p>Ejecutamos...</p>
+<div class="highlight"><pre><span></span><code>➜  foo python handing_errors.py
+  File <span class="s2">&quot;/Users/morphheus/Documents/devZone/python/foo/handing_errors.py&quot;</span>, line <span class="m">3</span>
+
+    ^
+SyntaxError: unexpected EOF <span class="k">while</span> parsing
+</code></pre></div>
+
+<p>Y ahora seleccionamos como versión local la 3.10.0</p>
+<div class="highlight"><pre><span></span><code>pyenv <span class="nb">local</span> <span class="m">3</span>.10.0
+</code></pre></div>
+
+<p>Ejecutamos...</p>
+<div class="highlight"><pre><span></span><code>➜  foo python handing_errors.py
+  File <span class="s2">&quot;/Users/morphheus/Documents/devZone/python/foo/handing_errors.py&quot;</span>, line <span class="m">1</span>
+    <span class="nv">expected</span> <span class="o">=</span> <span class="o">{</span><span class="m">9</span>: <span class="m">1</span>, <span class="m">18</span>: <span class="m">2</span>, <span class="m">19</span>: <span class="m">2</span>, <span class="m">27</span>: <span class="m">3</span>, <span class="m">28</span>: <span class="m">3</span>, <span class="m">29</span>: <span class="m">3</span>, <span class="m">36</span>: <span class="m">4</span>, <span class="m">37</span>: <span class="m">4</span>,
+               ^
+SyntaxError: <span class="s1">&#39;{&#39;</span> was never closed
+</code></pre></div>
+	</div>
+</article>
+			</div>
+		</section>
+		
+<footer class="footer">
+    <div class="container has-text-centered">
+        <div class="columns">
+            <div class="column">
+                    Made with ❤️ using Python from Granada. Under construction 🚧
+            </div>
+            <div class="column">
+                    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg" alt="License: CC BY-NC 4.0">
+        </div>
+    </div>
+</footer>
+	</body>
+</html>

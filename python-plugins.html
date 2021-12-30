@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+			<meta name="author" content="Antonio Ramirez" />
+		
+		
+		
+		<title>Plugins en Python  - Python Granada
+</title>
+		
+  			<link rel="stylesheet" href="https://pythongranada.github.io/blog/theme/css/style.min.css?3e58e027">
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="https://pythongranada.github.io/blog/theme/js/menu.js"></script>
+
+	</head>
+	<body>
+
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog">
+                <img src="https://pythongranada.github.io/blog/theme/images/logo_grande.svg">
+            </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog/pages/about.html">
+                Asociación
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link" href="https://pythongranada.github.io/blog/categories">
+Categorias                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="https://pythongranada.github.io/blog/category/blog.html">
+                        Blog
+                    </a>
+                </div>
+            </div>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item">
+            <div class="buttons">
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+		<section class="section">
+			<div class="container">
+<article class="message is-info">
+	<div class="message-header">
+		<h2>Plugins en Python</h2>
+		<p><time itemprop="dateCreated" datetime="2021-06-01T10:20:00+02:00">Tue 01 June 2021</time></p>
+	</div>
+	<div class="message-body has-text-dark">
+		<p>Vamos a proponer un pequeño caso de uso. Supongamos estamos trabajando en un programa que necesita generar una serie de gráficas. Para poder generar estas gráficas, debemos de acceder a una base de datos y desde ahí, recuperar un conjunto de datos, agruparlos según un criterio temporal (por ejemplo, días u horas),
+y además, en algunos casos, realizar transformaciones sobre esos datos para generar otros datos.</p>
+<p>En principio, no parece demasiado complicado, ¿verdad? Incluso podemos parametrizar parcialmente los datos que vamos a utilizar de entrada (por ejemplo, los periodos temporales). Pero, <strong>¿qué ocurre cuando las bases de datos por debajo cambian?</strong> Si cambia la nomenclatura de las tablas, o las relaciones entre ellas, o incluso pasamos de trabajar con bases de datos a hojas de cálculo EXCEL...</p>
+<p>En algunos casos la solución puede ser sencilla, como por ejemplo crear una pequeña base de datos para volcar los datos del EXCEL y trabajar con ella; en otros, quizás tengamos que modificar el core de nuestra librería para cambiar la forma en que se recuperan los datos. Pero, <strong>¿qué pasaría si las soluciones deben de coexistir entre ellas?</strong> Lo más probable es que terminemos con una capa de código intermedia dedicada a la selección de los mecanismos de generación de gráficas, y luego un conjunto de librerías, funciones o clases que lleven a cabo el duro trabajo de lidiar con las capas inferiores.</p>
+<p>Aquí se plantea otro problema adicional: si utilizamos la misma base de código para generar todos estos mecanismos, tendremos problemas para paralelizar el trabajo entre diferentes equipos y también para poder ampliar de cara al futuro dicha librería, y el mantenimiento se puede volver más complejo.</p>
+<p>Para resolver todo esto, <strong>vamos a utilizar plugins</strong>.</p>
+<h3>Qué entendemos por plugins:</h3>
+<p>Por ahora, vamos a considerar <strong>plugin</strong> como <em>un componente de código, en forma de clase, que posee una interfaz común con otros componentes de código y realiza una función similar a estos</em>. Es una definición un poco rara o rebuscada, y seguramente poco académica, pero que nos vendrá bien.</p>
+<h3>Preparando el plugin</h3>
+<p>Para poder usar el plugin, necesitaremos:</p>
+<ul>
+<li><strong>Buscar los plugins</strong></li>
+<li><strong>Seleccionar el plugin</strong></li>
+<li><strong>Programar el plugin</strong></li>
+</ul>
+<h4>Busqueda de plugins.</h4>
+<p>Hay varias formas de buscar automáticamente los plugins disponibles. Nosotros vamos a centrarnos en el uso de los <em>paquetes de espacios de nombre</em> o <strong>namespace packages</strong>. Para ello, debemos de usar las librerías <strong>importlib</strong> y <strong>pkgutil</strong>.</p>
+<p>El procedimiento es sencillo: supongamos que hemos creado un paquete con nuestro plugin, y ese paquete está usando un espacio de nombres vacio, por ejemplo <em>graficas.plugins</em>. Usando <strong>importlib</strong> y <strong>pkgutil</strong>, lo que vamos a hacer es buscar en ese espacio de nombres todos los módulos que existan. La ventaja es que ese <em>espacio de nombre</em> puede ser compartido y poblado por diferentes librerías, las cuales pueden añadir sus propios módulos que cuelgan debajo de <em>graficas.plugins</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+
+<span class="kn">import</span> <span class="nn">graficas.plugins</span>
+
+<span class="k">def</span> <span class="nf">iter_namespace</span><span class="p">(</span><span class="n">ns_pkg</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">iter_modules</span><span class="p">(</span><span class="n">ns_pkg</span><span class="o">.</span><span class="n">__path__</span><span class="p">,</span> <span class="n">ns</span><span class="o">.</span><span class="n">pkg</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+
+<span class="n">discovered_plugins</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">finder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ispkg</span>
+    <span class="ow">in</span> <span class="n">iter_namespace</span><span class="p">(</span><span class="n">graficas</span><span class="o">.</span><span class="n">plugins</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Pero esto sólo nos soluciona una parte del problema, porque lo que hemos recuperado son los módulos, no las clases. Para poder recuperar las clases, necesitamos revisar los módulos y recuperar dichas clases, lo cual podemos hacer usando la librería <strong>inspect</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="n">listado_plugins</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">module</span> <span class="ow">in</span> <span class="n">discovered_plugins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="c1">#Cuidado, ya que getmembers devuelve una tupla de dos elementos</span>
+    <span class="n">listado_plugins</span> <span class="o">+=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">)</span>
+</code></pre></div>
+
+<p>De esta forma, podremos recuperar todas las clases que haya en los módulos recuperados, las cuales deben de ser los plugins. Este código se puede ampliar, por ejemplo, para que sólo recupere ciertas clases, o recupere únicamente funciones, pero cualquiera de estas operaciones debería de realizarse usando <strong>mecanismos de reflexión</strong>.</p>
+<h4>Seleccionar el plugin</h4>
+<p>¿Recordáis lo que decíamos antes, de que un plugin debe de contar con una interfaz común al resto de plugins? Es en esta interfaz donde podemos añadir información sobre nuestro plugin, la cual nos permita realizar una seleccion. Si programamos <strong>métodos de clase</strong> que nos proporcionen esa información, podemos consultarlos a través del listado de plugins y seleccionar el correcto:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MiNuevoPlugin</span><span class="p">(</span><span class="n">PluginBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_init</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_init</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">nombre_plugin</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;MiNuevoPlugin&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">formatos_soportados</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;xlsx&#39;</span><span class="p">,</span><span class="s1">&#39;csv&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+<p>Este seria el proceso por el cual podemos recuperar nuestros plugins consultando estos datos:</p>
+<div class="highlight"><pre><span></span><code><span class="n">plugins_soportados</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">listado_plugins</span> <span class="k">if</span> <span class="s1">&#39;xlsx&#39;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">formatos_soportados</span><span class="p">()]</span>
+
+<span class="c1">#Tambien por nombre</span>
+<span class="n">plugin_por_nombre</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">listado_plugins</span> <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">nombre_plugin</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;MiNuevoPlugin&#39;</span><span class="p">),</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Podemos ampliar estos métodos de clase para que proporcionen cualquier información relevante que necesitemos para seleccionar nuestros plugins.</p>
+<h4>Programar el plugin</h4>
+<p>Ya hemos adelantado mucho sobre lo que requiere el programar nuestro plugin. Por un lado, hemos visto que necestiamos una <strong>clase base</strong>. Esto no es imprescindible, podemos hacerlo sin una clase base, pero debemos de cuidar que <strong>todos los plugins deben de compartir parte de la interfaz</strong>, y la forma más sencilla de hacer esto es empleando <em>herencia de clases</em> y, en mi caso y porque soy así de especial, utilizo también <em>clases abstractas</em> para ello.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span> <span class="nc">PluginBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_init</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_init</span> <span class="o">=</span> <span class="n">data_init</span> <span class="c1">#Datos de inicialización, puedes usar args y kwargs si quieres, pero voy con prisa :D</span>
+
+<span class="nd">@classmethod</span>
+<span class="nd">@abstractmethod</span>
+<span class="k">def</span> <span class="nf">nombre_plugin</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@classmethod</span>
+<span class="nd">@abstractmethod</span>
+<span class="k">def</span> <span class="nf">formatos_soportados</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@abstractmethod</span>
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<p>Esto debería de ser suficiente paraa nuestra clase base. Así, obligamos a que todos los plugins que compartan esta interfaz implementen los métodos de <em>nombre_plugin</em>, <em>formatos_soportados</em> y <em>run</em>, donde pondríamos el grueso de nuestro código.</p>
+<h3>Empaquetar y distribuir.</h3>
+<p>En mi caso, me gusta que el código de selección de plugins esté en el proyecto principal, y colocar cada plugin en una librería diferente; igualmente, tengo una librería adicional aparte de los plugins donde tengo programado el plugin base con la interfaz que debe de implementar cada plugin.</p>
+<p>A la hora de programar estos paquetes, utilizo <strong>poetry</strong> para ello. Se puede hacer también con <em>setup.py</em>, o con otros empaquetadores, pero ya estoy acostumbrado a usar <strong>poetry</strong>.</p>
+<p>Para ello, debemos de modificar ligeramente la estructura que nos genera poetry: si nuestro proyecto se llama <em>graficas-plugins-mysql</em>, nos creará una carpeta llamada <em>graficas-plugins-mysql</em>, en la cual tendremos nuestro código y nuestro módulo. Debemos de bajar ese módulo un nivel, renombrando la carpeta superior como <em>graficas-plugins</em> y creando una nueva carpeta <em>mysql</em> dentro de esa carpeta. Y dejar <em>graficas-plugins</em> vacía. Luego, ajustar el código y modificar el archivo <em>pyproject.toml</em> de esta manera: </p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.poetry]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s">&quot;graficas-plugins-mysql&quot;</span>
+<span class="n">version</span> <span class="o">=</span> <span class="s">&quot;0.0.1&quot;</span>
+<span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+<span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;bletter &lt;aramirez@letteringenieros.es&gt;&quot;</span><span class="p">]</span>
+<span class="n">packages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="n">include</span> <span class="o">=</span> <span class="s">&quot;graficas_plugins/mysql&quot;</span> <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<p>De esta forma, estaremos creando un <strong>namespace package</strong> en toda regla. Sólo tenemos que ajustar el resto del código para que no nos falle, y ya tendríamos funcionando un esquema de plugins.</p>
+<h3>Ventajas:</h3>
+<ul>
+<li>Es más fácil de mantener y ampliar.</li>
+<li>Permite paralelizar el trabajo entre diferentes equipos de desarrollo.</li>
+<li>Mejora la distribución del código, si en diferentes máquinas es necesario que haya diferentes versiones de la librería para atender las necesidades de diferentes clientes.</li>
+</ul>
+<h3>Inconvenientes:</h3>
+<ul>
+<li>Requiere de una planificación previa, para elaborar la interfaz común</li>
+<li>Infraestructura para distribuir correctamente el código.</li>
+<li>Para un único equipo o equipos muy pequeños, puede resultar demasiado engorroso.</li>
+</ul>
+	</div>
+</article>
+			</div>
+		</section>
+		
+<footer class="footer">
+    <div class="container has-text-centered">
+        <div class="columns">
+            <div class="column">
+                    Made with ❤️ using Python from Granada. Under construction 🚧
+            </div>
+            <div class="column">
+                    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg" alt="License: CC BY-NC 4.0">
+        </div>
+    </div>
+</footer>
+	</body>
+</html>

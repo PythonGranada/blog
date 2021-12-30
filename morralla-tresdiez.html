@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+			<meta name="author" content="Antonio Ramirez" />
+		
+		
+		
+		<title>Qué de morralla en el changelog de Python 3.10  - Python Granada
+</title>
+		
+  			<link rel="stylesheet" href="https://pythongranada.github.io/blog/theme/css/style.min.css?3e58e027">
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="https://pythongranada.github.io/blog/theme/js/menu.js"></script>
+
+	</head>
+	<body>
+
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog">
+                <img src="https://pythongranada.github.io/blog/theme/images/logo_grande.svg">
+            </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog/pages/about.html">
+                Asociación
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link" href="https://pythongranada.github.io/blog/categories">
+Categorias                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="https://pythongranada.github.io/blog/category/blog.html">
+                        Blog
+                    </a>
+                </div>
+            </div>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item">
+            <div class="buttons">
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+		<section class="section">
+			<div class="container">
+<article class="message is-info">
+	<div class="message-header">
+		<h2>Qué de morralla en el changelog de Python 3.10</h2>
+		<p><time itemprop="dateCreated" datetime="2021-06-28T18:20:00+02:00">Mon 28 June 2021</time></p>
+	</div>
+	<div class="message-body has-text-dark">
+		<p>Dentro de poco se nos viene la nueva Python 3.10 (bueno, dentro de poco según los tiempos de desarrollo, que todavía colea Pyhton 2.7 por ahí), así que es
+un buen momento para repasar qué trae de nuevo e interesante.. o no interesante.</p>
+<h3>Podemos usar paréntesis con los gestores de contexto</h3>
+<p>Vale, esta novedad parece un poco extraña... ¿a qué se refiere con los gestores de contexto?</p>
+<p>Si alguna vez has tenido que acceder al contenido de un archivo de texto, esto te tiene que sonar:</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">origen</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">origen</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Bien, ese <em>open</em> que aparece dentro del <em>with</em> es un gestor de contexto o <strong>context manager</strong>. En este caso, nos proporciona un acceso al archivo mientras estemos dentro del contexto de <em>with</em> (no nos salgamos de la indentación). Cuando termina el contexto de <em>with</em>, es decir, abandonamos la indentación, se cierra el acceso al archivo.</p>
+<p>Con los cambios de Python 3.10, ahora podemos hacer algo como esto:</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="p">(</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">file_path_a</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">origen_a</span><span class="p">,</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">file_path_b</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">destino_b</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">destino_b</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">origen_a</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</code></pre></div>
+
+<p>Es decir, podemos encerrar los contextos en múltiples líneas usando paréntesis. ¿Es interesante? Podemos decir que sí, ya que nos permite reducir el númnero de anidamientos si estamos utilizando múltiples contextos. ¿Lo usaremos mucho en el día a día? Puede que no.</p>
+<h3>Mejores mensajes de error</h3>
+<p>En la versión 3.10, los mensajes de error que devuelve el interprete de Python son más claros y nos dan más información. Por ejemplo, los <em>SyntaxError</em> ahora nos marcarán toda la expresión que ha fallado, en lugar de indicar la posición donde se ha detectado el error:</p>
+<div class="highlight"><pre><span></span><code><span class="n">File</span> <span class="s2">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span>
+    <span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+           <span class="o">^^^^^^^^^^^^^^^^^^^^</span>
+    <span class="ne">SyntaxError</span><span class="p">:</span> <span class="n">Generator</span> <span class="n">expression</span> <span class="n">must</span> <span class="n">be</span> <span class="n">parenthesized</span>
+</code></pre></div>
+
+<p>Otros errores también se beneficiarán de esto, como por ejemplo <em>IndentationError</em>, <em>AttributeErrors</em> y <em>NameErrors</em>.</p>
+<p>¿Es interesante? Mucho, ya que mejores mensajes de error nos facilitan mucho el trabajo. ¿Lo usaremos día a día? Siempre.</p>
+<p>Aunque siempre queda la duda de qué se entiende por <em>mensajes de error más claros</em>, ya que eso no significa que de primeras vayamos a leer el error y encontrar el fallo.</p>
+<h3>Soporte de switch-case</h3>
+<p>Aunque en el changelog aparezca como <strong>Structural Pattern Matching</strong>, la idea general viene a ser la misma: tendremos por fin la posibilidad de hacer un <em>switch-case</em> como estamos acostumbrados en otros lenguajes. Esta será la sintaxis:</p>
+<div class="highlight"><pre><span></span><code><span class="n">match</span> <span class="n">subject</span><span class="p">:</span>
+    <span class="n">case</span> <span class="o">&lt;</span><span class="n">pattern_1</span><span class="o">&gt;</span><span class="p">:</span>
+        <span class="o">&lt;</span><span class="n">action_1</span><span class="o">&gt;</span>
+    <span class="n">case</span> <span class="o">&lt;</span><span class="n">pattern_2</span><span class="o">&gt;</span><span class="p">:</span>
+        <span class="o">&lt;</span><span class="n">action_2</span><span class="o">&gt;</span>
+    <span class="n">case</span> <span class="n">_</span><span class="p">:</span>
+        <span class="o">&lt;</span><span class="n">action_wildcard</span><span class="o">&gt;</span>
+</code></pre></div>
+
+<p>¿Y cómo funcionará? Veámoslo con un ejemplo:</p>
+<div class="highlight"><pre><span></span><code><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://localhost&#39;</span><span class="p">)</span>
+
+<span class="n">status</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">status</span>
+
+<span class="n">match</span> <span class="n">status</span><span class="p">:</span>
+    <span class="n">case</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Todo correcto&#39;</span>
+    <span class="n">case</span> <span class="mi">400</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Bad request&#39;</span>
+    <span class="n">case</span> <span class="mi">404</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Not found&#39;</span>
+    <span class="n">case</span> <span class="n">_</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Vete a saber qué ha pasado&#39;</span>
+</code></pre></div>
+
+<p>En caso de tener el código de arriba en una función, si la petición HTTP nos devuelve un status 400, la función devuelve un 'Bad Request', un 200 devuelve un 'Todo correcto', y así. El <em>case _</em> es opcional, y se pueden encadenar opciones con el operador <em>|</em> u <em>or</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">case</span> <span class="mi">400</span> <span class="o">|</span> <span class="mi">404</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s1">&#39;Cosas chungas con la petición&#39;</span>
+</code></pre></div>
+
+<p>Podremos evaluar tipos un poco más complejos, como tuplas o diccionarios, y evaluar valores literales y también mediante variables. Veamos un ejemplo con una tupla:</p>
+<div class="highlight"><pre><span></span><code><span class="n">point</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">33</span><span class="p">)</span>
+
+<span class="n">match</span> <span class="n">point</span><span class="p">:</span>
+    <span class="n">case</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Origen&#39;</span><span class="p">)</span>
+    <span class="n">case</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Y=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">case</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;X=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">case</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;X=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">, Y=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Dentro del <em>match</em>, si la tupla es (0,0), saltará el primer <em>case</em>, pero si el primer elemento de la tupla es un valor literal (en este caso, 0) y el segundo es diferente, entonces saltará el segundo.</p>
+<p>También se aplicará a clases, e incluso se podrá usar con listas... ¡y también añadiendo guardas!</p>
+<div class="highlight"><pre><span></span><code><span class="n">point</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="n">match</span> <span class="n">point</span><span class="p">:</span>
+    <span class="n">case</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Punto en la diagonal de </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">case</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Punto fuera de la diagonal&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Muy interesante y muy útil, ya que nos permitirá reducir el código usado para selecciones que hasta ahora dependía de múltiples sentencias <strong>if</strong>, a veces anidadas.</p>
+<h3>¿Y qué más cosas?</h3>
+<p>Bien, también trae mejoras para los <em>type hints</em>. ¿Y qué son los <em>type hints</em>? Puede que te suenen más por el nombre de <strong>anotaciones</strong>, si en algún momento te has encontrado con cosas similares a estas:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">funcion_retorno</span><span class="p">(</span><span class="n">iteracion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s1">&#39;ok&#39;</span>
+</code></pre></div>
+
+<p>Las anotaciones son indicaciones acerca de los tipos empleados, tanto en la declaración de las variables como de los valores retornados por funciones, que se utiliza sobre todo por analizadores sintácticos de código. No afectan al funcionamiento básico de Python (es decir, una anotación no implica una restricción fuerte para el tipo empleado, puedes declarar iteracion como <em>int</em> y aún así pasarle un <em>float</em> o un <em>Decimal</em> o un <em>str</em>), sino que se entiende más como una indicación al programador... aunque algunas librerías como por ejemplo <a href="https://pydantic-docs.helpmanual.io/">pydantic</a> hagan uso de estas anotaciones para trabajar.</p>
+<p>No voy a extenderme con las anotaciones porque... bueno, sé que hay poca gente que las use. Símplemente echadle un vistazo a <a href="https://betterprogramming.pub/twenty-type-hinting-techniques-and-tools-for-better-python-code-e877e0b0c679">este artículo</a> para ver cómo funciona la cosa.</p>
+<p>¿Otras partes que han recibido cariño? Muchas, por eso este artículo habla de <em>morralla</em>... y aquí tenéis, <a href="https://docs.python.org/3.10/whatsnew/3.10.html">toda la morralla</a> para que la podáis leer a gusto.</p>
+	</div>
+</article>
+			</div>
+		</section>
+		
+<footer class="footer">
+    <div class="container has-text-centered">
+        <div class="columns">
+            <div class="column">
+                    Made with ❤️ using Python from Granada. Under construction 🚧
+            </div>
+            <div class="column">
+                    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg" alt="License: CC BY-NC 4.0">
+        </div>
+    </div>
+</footer>
+	</body>
+</html>

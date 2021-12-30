@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE-edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+			<meta name="author" content="Antonio Ramirez" />
+		
+		
+		
+		<title>Programando con QT (1)  - Python Granada
+</title>
+		
+  			<link rel="stylesheet" href="https://pythongranada.github.io/blog/theme/css/style.min.css?3e58e027">
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="https://pythongranada.github.io/blog/theme/js/menu.js"></script>
+
+	</head>
+	<body>
+
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog">
+                <img src="https://pythongranada.github.io/blog/theme/images/logo_grande.svg">
+            </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="https://pythongranada.github.io/blog/pages/about.html">
+                Asociación
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link" href="https://pythongranada.github.io/blog/categories">
+Categorias                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="https://pythongranada.github.io/blog/category/blog.html">
+                        Blog
+                    </a>
+                </div>
+            </div>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item">
+            <div class="buttons">
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+		<section class="section">
+			<div class="container">
+<article class="message is-info">
+	<div class="message-header">
+		<h2>Programando con QT (1)</h2>
+		<p><time itemprop="dateCreated" datetime="2021-06-28T18:20:00+02:00">Mon 28 June 2021</time></p>
+	</div>
+	<div class="message-body has-text-dark">
+		<p>Ahora que se acercan las Navidades y vamos a tener todos algo más de tiempo libre <strong>(¡mentira!)</strong>, ¿por qué no aprovechar para aprender a
+programar interfaces gráficas para nuestros proyectos en Python?</p>
+<p>Este artículo es el primero de una serie donde iremos explicando, paso a paso, cómo podemos escribir una interfaz gráfica para nuestros programas y scripts en Python, utilizando para ello las librerías de Qt for Python.</p>
+<h2>PARTE 1 - Historia y preparativos</h2>
+<h3>Historia de Qt for Python.</h3>
+<p><strong>(TL;DR)</strong> Baste decir que Qt es una librería originalmente escrita en C++ para desarrollo de interfaces gráficas. El <em>proyecto KDE</em> la tomó como base, y la empresa original, <em>Trolltech</em>, fue comprada por <em>Nokia</em>, que después fue absorbida por <em>Microsoft</em>, que luego la vendió a <em>Digia</em>, que después se estableció como <em>The Qt Company</em>.</p>
+<p>Después de todo esto, surgieron <em>bindings</em> de la librería para Python como los módulos <em>PySide2</em> y <em>PySide6</em>.</p>
+<h3>Preparativos</h3>
+<p>No vamos a necesitar demasiado para empezar:</p>
+<ul>
+<li><em>Python 3.6 o superior.</em> En mi caso, utilizaré Python 3.10, así que el código puede verse extraño. Si veis un <em>match case</em>, recordad que se convierte en un bloque <em>if elsif</em>.</li>
+<li><em>Pipenv:</em> Para gestionar y manejar el entorno virtual. Podéis utilizar cualquier otro gestor de entornos virtuales, o incluso directamente <em>virtualenv</em>, <em>venv</em> y <em>pip</em>. Yo lo empleo por comodidad.</li>
+<li><em>Qt Creator:</em> Herramienta de Qt para trabajar con interfaces gráficas.</li>
+</ul>
+<h4>Instalando Qt Creator.</h4>
+<p>Si estás en <em>Ubuntu</em>, puedes instalarlo desde consola:</p>
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt install qtcreator</span>
+</code></pre></div>
+
+<p>En el caso de emplear <em>Fedora o derivados de RedHat</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="go">sudo dnf install qt-creator</span>
+</code></pre></div>
+
+<p>o el equivalente con <em>yum</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="go">sudo yum install qt-creator</span>
+</code></pre></div>
+
+<p>En el caso de <em>Windows o MacOS</em>, debes de utilizar los instaladores oficiales de Qt. Para ello, tienes que ir a <a href="https://www.qt.io/download">su página web</a>, y seleccionar la opción <strong>Go open source</strong>, para luego buscar abajo en la página el enlace de <strong>Download the Qt Online Installer</strong>. Ojo con esto, ya que Qt funciona con una licencia dual de tipo Comercial / Open Source, y si intentamos descargar la versión comercial nos pedirá que rellenemos un formulario y darnos de alta como cliente.</p>
+<p>Una vez tengamos descargados el instalador online, podemos ejecutarlo y, tras crearnos una cuenta de Qt en caso de no tenerla (tranquilos, que es gratuita), podremos seleccionar aquellas herramientas que queramos. <em>Qt Creator</em> está en el apartado de <em>Tools</em> (Herramientas), así que nos aseguramos de seleccionarlo y descargarlo. A partir del mismo instalador podemos actualizar a nuevas versiones o instalar otros paquetes en caso de necesitarlos.</p>
+<h3>Preparando nuestro entorno.</h3>
+<p>Para empezar, crearemos una carpeta para nuestro pequeño proyecto, donde vamos a definir un <em>.gitignore</em> básico para Python (podemos sacarlo <a href="https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore">de GitHub</a> o de cualquier otro proyecto que tengamos por ahí)</p>
+<div class="highlight"><pre><span></span><code><span class="go">mkdir tutorialQt</span>
+<span class="go">cd tutorialQt</span>
+<span class="go">nano .gitignore</span>
+</code></pre></div>
+
+<p>Una vez tengamos preparado el .gitignore, podemos empezar a preparar nuestro Pipfile con el entorno que necesitemos:</p>
+<div class="highlight"><pre><span></span><code><span class="go">pipenv --python 3.10</span>
+<span class="go">pipenv install pyside6</span>
+</code></pre></div>
+
+<p>Esto nos prepara un entorno virtual y nos instala las dependencias para las librerías de Qt 6; si queremos usar las librerías de la versión 5.12,
+usaríamos <em>pipenv install pyside2</em>. Al final, nuestro archivo Pipfile debe de parecerse a esto:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[[source]]</span>
+<span class="na">url</span> <span class="o">=</span> <span class="s">&quot;https://pypi.org/simple&quot;</span>
+<span class="na">verify_ssl</span> <span class="o">=</span> <span class="s">true</span>
+<span class="na">name</span> <span class="o">=</span> <span class="s">&quot;pypi&quot;</span>
+
+<span class="k">[packages]</span>
+<span class="na">pyside6</span> <span class="o">=</span> <span class="s">&quot;*&quot;</span>
+
+<span class="k">[dev-packages]</span>
+
+<span class="k">[requires]</span>
+<span class="na">python_version</span> <span class="o">=</span> <span class="s">&quot;3.10&quot;</span>
+</code></pre></div>
+
+<h3>Esqueleto de la aplicación</h3>
+<p>Nuestro siguiente paso va a ser crear un punto de entrada y la ventana principal para nuestra aplicación.</p>
+<h4>Creando la ventana principal</h4>
+<p>Vamos a crear un módulo llamado <em>mainwindow</em> dentro del proyecto:</p>
+<div class="highlight"><pre><span></span><code><span class="go">mkdir mainwindow</span>
+<span class="go">touch mainwindow/__init__.py</span>
+</code></pre></div>
+
+<p>Después lanzamos el Qt Creator, seleccionamos <strong>Nuevo archivo o proyecto</strong>, y luego dentro del menú de <em>Qt</em>, la opción de <em>Qt Designer Form</em> para poder crear un nuevo <em>widget</em> o componente a partir de una plantilla previa:</p>
+<p><img alt="Menú de capturas" src="https://pythongranada.github.io/blog/images/qt_creator_01.jpg"></p>
+<p>Luego, debemos de seleccionar el tipo de <em>widget</em> o componente que queremos usar como base de nuestro nuevo componente, en este caso queremos una ventana principal o <em>main window</em>, y la queremos guardar dentro del módulo que acabamos de crear, así que seleccionamos la ruta del módulo para que nos guarde ahí el archivo:</p>
+<p><img alt="Seleccionar main window" src="https://pythongranada.github.io/blog/images/qt_creator_02.jpg"></p>
+<p>Por último, vamos a incluir en nuestra pantalla principal un pequeño texto que diga 'Hello World!'. Para ello, en la columna de la izquierda buscamos y seleccionamos <strong>Label</strong>, y arrastramos y soltamos dentro de nuestro widget. Lo colocamos centrado, y luego si pulsamos dos veces en ese label, podemos editar el texto para que diga <em>Hello World!</em></p>
+<p><img alt="Añadir un label" src="https://pythongranada.github.io/blog/images/qt_creator_03.jpg"></p>
+<p>Una vez lo tenemos listo, le damos a guardar. Deberíamos de tener ahora en nuestro módulo <em>mainwindow</em> un archivo llamado <em>mainwindow.ui</em>, el cual representa nuestra interfaz gráfica. Este arhcivo aún no lo podemos usar tal cual, sino que debemos decirle a Python que lo cargue y lo asocie a nuestro código (las interfaces con extensión .UI son, en realidad, código XML). Existen varias formas de lograr eso, pero vamos a ir a la más sencilla y simple.</p>
+<p>Para poder cargar nuestra interfaz y asociarla a una clase, activamos nuestro entorno virtual y lanzamos la instrucción <em>pyside6-uic</em> (<em>pyside2-uic</em> si estamos trabajando con PySide2 y Qt 5.12):</p>
+<div class="highlight"><pre><span></span><code><span class="go">pipenv shell</span>
+<span class="go">pyside6-uic mainwindow/mainwindow.ui &gt; mainwindow/ui_mainwindow.py</span>
+</code></pre></div>
+
+<p>Esto nos generará un archivo llamdo <strong>ui_mainwindow.py</strong> el cual permitirá cargar la interfaz. Para poder usarlo, ahora sí, creamos un archivo <strong>mainwindow.py</strong> dentro del módulo:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># mainwindow/mainwindow.py</span>
+
+<span class="kn">from</span> <span class="nn">PySide6.QtWidgets</span> <span class="kn">import</span> <span class="n">QMainWindow</span>
+
+<span class="kn">from</span> <span class="nn">.ui_mainwidow</span> <span class="kn">import</span> <span class="n">Ui_MainWindow</span>
+
+<span class="k">class</span> <span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span><span class="n">Ui_MainWindow</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Cuando necesitemos acceder a algún elemento de la interfaz, podemos hacerlo a través de <em>self.ui</em>.</p>
+<h4>Creando el punto de entrada.</h4>
+<p>Nuestro punto de entrada va a ser un archivo llamado <strong>app.py</strong> en la raíz del proyecto. En este archivo escribiremos el código necesario para lanzar nuestra aplicación:</p>
+<div class="highlight"><pre><span></span><code><span class="gp"># </span>app.py
+
+<span class="go">import sys</span>
+
+<span class="go">from PySide6 import QtWidgets</span>
+
+<span class="go">from mainwindow.mainwindow import MainWindow</span>
+
+<span class="go">if __name__ == &#39;__main__&#39;:</span>
+
+<span class="go">    app = QtWidgets.QApplication([])</span>
+
+<span class="go">    mainWindow = MainWindow()</span>
+<span class="go">    mainWindow.show()</span>
+
+<span class="go">    sys.exit(app.exec())</span>
+</code></pre></div>
+
+<p>Con esto, ya podemos lanzar nuestra interfaz gráfica desde la consola en la que tenemos activado el entorno virtual:</p>
+<div class="highlight"><pre><span></span><code><span class="go">python app.py</span>
+</code></pre></div>
+
+<p>Si todo ha ido bien, deberíamos de ver nuestra pequeña interfaz gráfica.</p>
+	</div>
+</article>
+			</div>
+		</section>
+		
+<footer class="footer">
+    <div class="container has-text-centered">
+        <div class="columns">
+            <div class="column">
+                    Made with ❤️ using Python from Granada. Under construction 🚧
+            </div>
+            <div class="column">
+                    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg" alt="License: CC BY-NC 4.0">
+        </div>
+    </div>
+</footer>
+	</body>
+</html>
