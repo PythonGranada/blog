@@ -58,7 +58,7 @@ DEFAULT_PAGINATION = False
 SITEURL=""
 
 # Theme config
-MENUITEMS_NAVBAR = (("Asociación", f"{SITEURL}/pages/about.html"),)
+MENUITEMS_NAVBAR = (("Asociación", f"{SITEURL}/pages/about.html"),("Código de Conducta", f"{SITEURL}/pages/coc.html"), ("COVID-19", f"{SITEURL}/pages/covid-19.html"),)
 NAVBAR_STYLE = "is-primary"
 THEME_LOGO = f"{SITEURL}/theme/images/logo_grande.svg"
 FOOTER= "Made with ❤️ using Python from Granada. Under construction 🚧"
