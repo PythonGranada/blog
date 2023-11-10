@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: pythongranada/gh-pages-pelican-action@0.2.6
+    - uses: pythongranada/gh-pages-pelican-action@4.8.0
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         PELICAN_THEME_FOLDER: themes/buruma
